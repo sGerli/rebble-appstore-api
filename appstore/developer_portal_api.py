@@ -296,7 +296,10 @@ def submit_new_release(app_id):
 
     release_old = Release.query.filter_by(app=app).order_by(Release.published_date.desc()).first()
 
-    if version <= release_old.version:
+    parsed_version = map(int, release_old.version.split(".")[:2])
+    parsed_old_version = map(int, release_old.version.split(".")[:2])
+
+    if parsed_version[0] < parsed_old_version[0] or (parsed_version[0] == parsed_old_version[0] and parsed_version[1] <= parsed_old_version[1]):
         return jsonify(
             error=f"The version ({version}) is already on the appstore", 
             e="version.exists", 
